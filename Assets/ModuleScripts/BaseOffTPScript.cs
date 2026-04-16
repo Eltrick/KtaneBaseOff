@@ -6,7 +6,7 @@ using UnityEngine;
 public class BaseOffTPScript : TPScript<BaseOffScript>
 {
     private bool _isMute = false;
-    private string _qwertyLayout = "qwertyuiopasdfghjklzxcvbnm";
+    private string _qwertyLayout = "qwertyuiopasdfghjklzxcvbnm*";
 
     public override IEnumerator ForceSolve()
     {
@@ -40,7 +40,7 @@ public class BaseOffTPScript : TPScript<BaseOffScript>
 
             if (split.Any(x => !_qwertyLayout.Contains(x)))
             {
-                yield return "sendtochaterror Key not found in QWERTY keyboard detected. Cancelling command.";
+                yield return "sendtochaterror Key not found in QWERTY keyboard and not the submit button detected. Cancelling command.";
                 yield break;
             }
 
@@ -50,7 +50,9 @@ public class BaseOffTPScript : TPScript<BaseOffScript>
                 Module._keyboard[_qwertyLayout.IndexOf(split[i])].OnInteract();
                 yield return new WaitForSeconds(.1f);
             }
-            Module._keyboard[26].OnInteract();
+
+            if (!split.Contains('*'))
+                yield break;
 
             while (!Module._isModuleSolved && _isMute)
                 yield return null;
